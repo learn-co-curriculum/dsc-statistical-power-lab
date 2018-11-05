@@ -25,7 +25,7 @@ You will be able to:
 * Demonstrate the impact of sample size on statistical power using simulations
 * Demonstrate the combined effect of sample size and effect size on statistical power using simulations  
   
-To start, let's import the necessary libraries required for this simuation:
+To start, let's import the necessary libraries required for this simuation:.
 
 
 ```python
@@ -54,18 +54,18 @@ We will run a simulation with above information to calculate the power expected 
 
 ```python
 # Number of patients in each group
-sample_size = None
+sample_size = 12
 
 # Control group
-control_mean = None
-control_sd = None
+control_mean = 0
+control_sd = 0.21
 
 # Experimental group
-experimental_mean = None
-experimental_sd = None
+experimental_mean = 0.17
+experimental_sd = 0.21
 
 #Set the number of simulations for our test = 1000
-n_sim = None
+n_sim = 1000
 ```
 
 We can now start running our simulations to run an independance t-test with above data and store the calculated p_value in our `p` array. Perform following tasks.
@@ -92,14 +92,29 @@ p.fill(np.nan)
 
 #  Run a for loop for range of values in n_sim
 
+for s in range(n_sim):
+
+    control = np.random.normal(loc= control_mean, scale=control_sd, size=sample_size)
+    
+    experimental = np.random.normal(loc= experimental_mean, scale=experimental_sd, size=sample_size)
+    
+    t_test = stats.ttest_ind(control, experimental)
+    
+    p[s] = t_test[1]
+
 # number of null hypothesis rejections
-num_null_rejects = None
-reject_proportion = None
+num_null_rejects = np.sum(p < 0.05)
+reject_proportion = num_null_rejects/float(n_sim)
 
 reject_proportion
-
-# 0.495
 ```
+
+
+
+
+    0.495
+
+
 
 Our results tell us that using 12 participants in each group and with given statistics, the power we obtain is 49% for our test settings. This can be interpreted as follows:
 
@@ -116,7 +131,7 @@ Let's define our experimental parameters.
 
 ```python
 # required power 0.95
-target = None
+target = 0.95
 ```
 
 We will also need to define the number of simulations and a `current` variable for an iterative comparison with target power defined. We shall start with a sample size of 12 (current) and keep increasing it until the required power is achieved. We shall also increase the number of simulations to 10,000 for a more deterministic output. 
@@ -148,12 +163,72 @@ np.random.seed(10)
 p = (np.empty(n_sim))
 p.fill(np.nan)
 
+# keep iterating until desired power is obtained
+
 power_sample = []
+while current < target:
 
-# keep iterating as shown above until desired power is obtained
+    data = np.empty([n_sim, sample_size, 2])
+    data.fill(np.nan)
+    
+    # For control group 
+    data[:,:,0] = np.random.normal(loc=control_mean, scale=control_sd, size=[n_sim, sample_size])
+    
+    # For experimental group
+    data[:,:,1] = np.random.normal(loc=experimental_mean, scale=experimental_sd, size=[n_sim, sample_size])            
+    
+    result = stats.ttest_ind(data[:, :, 0],data[:, :, 1],axis=1)
+                                
+    p = result[1]
 
+    # Number of simulations where the null hypothesis was rejected
+    rejects = np.sum(p < 0.05)
+        
+    # Calculate reject proportion
+    reject_proportion = rejects/ float(n_sim)
+
+    current =  reject_proportion
+
+    print ("Number of Samples:", sample_size,", Calculated Power =", current)
+    power_sample.append([sample_size, current])
+
+    # increase the number of samples by one for the next iteration of the loop
+    sample_size += 1
+    
     
 ```
+
+    Number of Samples: 12 , Calculated Power = 0.4754
+    Number of Samples: 13 , Calculated Power = 0.5066
+    Number of Samples: 14 , Calculated Power = 0.5423
+    Number of Samples: 15 , Calculated Power = 0.5767
+    Number of Samples: 16 , Calculated Power = 0.6038
+    Number of Samples: 17 , Calculated Power = 0.6297
+    Number of Samples: 18 , Calculated Power = 0.658
+    Number of Samples: 19 , Calculated Power = 0.6783
+    Number of Samples: 20 , Calculated Power = 0.7056
+    Number of Samples: 21 , Calculated Power = 0.7266
+    Number of Samples: 22 , Calculated Power = 0.7481
+    Number of Samples: 23 , Calculated Power = 0.7624
+    Number of Samples: 24 , Calculated Power = 0.7864
+    Number of Samples: 25 , Calculated Power = 0.8031
+    Number of Samples: 26 , Calculated Power = 0.8178
+    Number of Samples: 27 , Calculated Power = 0.8354
+    Number of Samples: 28 , Calculated Power = 0.8405
+    Number of Samples: 29 , Calculated Power = 0.8568
+    Number of Samples: 30 , Calculated Power = 0.8736
+    Number of Samples: 31 , Calculated Power = 0.8786
+    Number of Samples: 32 , Calculated Power = 0.89
+    Number of Samples: 33 , Calculated Power = 0.8975
+    Number of Samples: 34 , Calculated Power = 0.9077
+    Number of Samples: 35 , Calculated Power = 0.9146
+    Number of Samples: 36 , Calculated Power = 0.9188
+    Number of Samples: 37 , Calculated Power = 0.9292
+    Number of Samples: 38 , Calculated Power = 0.9369
+    Number of Samples: 39 , Calculated Power = 0.9369
+    Number of Samples: 40 , Calculated Power = 0.9482
+    Number of Samples: 41 , Calculated Power = 0.9521
+
 
 We can also plot calculated power against sample size to visually inspect the effect of increasing sample size. 
 
@@ -163,8 +238,21 @@ We can also plot calculated power against sample size to visually inspect the ef
 
 from pylab import rcParams
 rcParams['figure.figsize'] = 10, 5
+plt.figure()
+plt.title('Power vs. Sample Size')
+plt.xlabel('Sample Size')
+plt.ylabel('Power')
 
+ans = power_sample
+df = pandas.DataFrame(ans, index=None)
+plt.plot(df[0], df[1])
+
+plt.show()
 ```
+
+
+![png](index_files/index_14_0.png)
+
 
 Above output tells us that for our researcher, in order to get the required power (95%) for the observed effect of 0.17 , he would need considerably higher number of patients in each group i.e. 41. 
 
