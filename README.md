@@ -1,5 +1,5 @@
 
-# Statistical Power
+# Statistical Power - Lab
 
 ## Introduction
 
@@ -24,6 +24,8 @@ You will be able to:
 * Perform Power calculation using SciPy and Python
 * Demonstrate the impact of sample size on statistical power using simulations
 * Demonstrate the combined effect of sample size and effect size on statistical power using simulations  
+
+## Let's get started!
   
 To start, let's import the necessary libraries required for this simuation:
 
@@ -35,7 +37,7 @@ import pandas
 import matplotlib.pyplot as plt
 ```
 
-### Scenario
+## Scenario
 
 A researcher wants to study how daily protein supplementation in the elderly population will affect baseline liver fat. The study budget will allow enrollment of 24 patients. Half will be randomized to a placebo group and half to the protein supplement treatment group and the trial will be carried out over one month. It is desired to see whether the mean change in percentage of liver fat from baseline to the end of the study differs between the two groups in the study. 
 
