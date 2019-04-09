@@ -4,7 +4,7 @@
 ## Introduction
 
 
-In this lesson, we will consider a general-purpose simulation approach to estimating the power of an experimental design. Power analysis is an important aspect of experimental design. It allows us to determine the sample size required to detect an effect of a given size with a given degree of confidence. In other words, it allows us to determine the probability of detecting an effect of a given size with a given level of confidence, under sample size constraints. If this probability is unacceptably low, we would be wise to alter or abandon the experiment.
+In this lesson, you'll practice doing a power-analysis during experimental design. As you've seen, power analysis allows you to determine the sample size required to detect an effect of a given size with a given degree of confidence. In other words, it allows you to determine the probability of detecting an effect of a given size with a given level of confidence, under sample size constraints.
 
 The following four factors have an intimate relationship:
 
@@ -33,15 +33,17 @@ To start, let's import the necessary libraries required for this simuation:.
 ```python
 import numpy as np
 import scipy.stats as stats
-import pandas
+import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_style('darkgrid')
 ```
 
 ## Scenario
 
 A researcher wants to study how daily protein supplementation in the elderly population will affect baseline liver fat. The study budget will allow enrollment of 24 patients. Half will be randomized to a placebo group and half to the protein supplement treatment group and the trial will be carried out over one month. It is desired to see whether the mean change in percentage of liver fat from baseline to the end of the study differs between the two groups in the study. 
 
-So we have the null hypothesis 
+With this, the researcher writes the null hypothesis 
 
 **There is no difference between experimental and control means i.e. H0 is equal to H1**
 
@@ -51,7 +53,7 @@ And the alternative Hypothesis
 
 The researcher needs to know what power  will be obtained under the sample size restrictions to identify a change in mean percent liver fat of 0.17. Based on past results, a common standard deviation of 0.21 will be used for each treatment group in the power analysis. 
 
-We will run a simulation with above information to calculate the power expected from the given sample size. From above we have following data to work with. 
+To determine the practicality of this experimental design, you'll a power analysis simulation.
 
 
 ```python
@@ -70,9 +72,9 @@ experimental_sd = 0.21
 n_sim = 1000
 ```
 
-We can now start running our simulations to run an independance t-test with above data and store the calculated p_value in our `p` array. Perform following tasks.
+You can now start running our simulations to run an independance t-test with above data and store the calculated p_value in our `p` array. Perform following tasks.
 
-* Initialize a numpy array and fill it with Nan values for storing the results (p_value) of our independance T-test.
+* Initialize a numpy array and fill it with Nan values for storing the results (p_value) of the independance T-test.
 * For defined number of simulations (i.e. 1000), do the following:
 
     * Generate a random normal variable with control mean and sd
@@ -106,9 +108,9 @@ for s in range(n_sim):
 
 # number of null hypothesis rejections
 num_null_rejects = np.sum(p < 0.05)
-reject_proportion = num_null_rejects/float(n_sim)
+power = num_null_rejects/float(n_sim)
 
-reject_proportion
+power
 ```
 
 
@@ -118,22 +120,41 @@ reject_proportion
 
 
 
-Our results tell us that using 12 participants in each group and with given statistics, the power we obtain is 49% for our test settings. This can be interpreted as follows:
+These results indicate that using 12 participants in each group and with given statistics, the statistical power of the experimetn is 49%. This can be interpreted as follows:
 
-> **If a large effect is truly present between control and experimental groups, then the null hypothesis (i.e. no difference with alpha 0.05) would be rejected 49% of times. **
+> **If a large effect (.17 or greater) is truly present between control and experimental groups, then the null hypothesis (i.e. no difference with alpha 0.05) would be rejected 49% of the time. **
 
 ## Sample size requirements for a given effect size
 
-The researcher conducting this experiment is not satisfied with the results of power calculations shown above, and would like to work out what sample size is required in order to be able to reject the null hypothesis 95% of times that an effect size of 0.17 exists between control and experimental group means. (as compared to 49% with current sample size). 
+Often in behavioral research .8 is accepted as a sufficient level of power.  
 
-To achieve this, we shall move on to a more common scenario, where a design and effect size is decided and we would like to know what sample size is needed to achieve a particular power. This is a straightforward extension of the previous example: we begin with a current sample size and calculate the associated power. We then perform such a calculation repeatedly, each time increasing the sample size, until the power has reached the desired level.
-
-Let's define our experimental parameters. 
+Clearly, this is not the case for the experiment as currently designed. Determine the required sample size in order to identify a difference of .17 or greater between the group means with an 80% power.
 
 
 ```python
-# required power 0.95
-target = 0.95
+from statsmodels.stats.power import TTestPower
+```
+
+
+```python
+power = TTestPower()
+```
+
+
+```python
+power.solve_power(effect_size=.17, alpha=0.05, power=.8)
+```
+
+
+
+
+    273.51381725963785
+
+
+
+
+```python
+target = 0.8
 ```
 
 We will also need to define the number of simulations and a `current` variable for an iterative comparison with target power defined. We shall start with a sample size of 12 (current) and keep increasing it until the required power is achieved. We shall also increase the number of simulations to 10,000 for a more deterministic output. 
@@ -142,7 +163,7 @@ We will also need to define the number of simulations and a `current` variable f
 ```python
 # minimum sample size to start the simulations 
 sample_size = 12
-current = 0
+null_rejected = 0
 n_sim = 10000
 ```
 
@@ -168,7 +189,7 @@ p.fill(np.nan)
 # keep iterating until desired power is obtained
 
 power_sample = []
-while current < target:
+while null_rejected < target:
 
     data = np.empty([n_sim, sample_size, 2])
     data.fill(np.nan)
@@ -181,18 +202,14 @@ while current < target:
     
     result = stats.ttest_ind(data[:, :, 0],data[:, :, 1],axis=1)
                                 
-    p = result[1]
+    p_vals = result[1]
 
-    # Number of simulations where the null hypothesis was rejected
-    rejects = np.sum(p < 0.05)
-        
-    # Calculate reject proportion
-    reject_proportion = rejects/ float(n_sim)
+    #Since you know that all simulations are from a different distribution \
+    #all those that rejected the null-hypothesis are valid
+    null_rejected = np.sum(p_vals < 0.05) / n_sim
 
-    current =  reject_proportion
-
-    print ("Number of Samples:", sample_size,", Calculated Power =", current)
-    power_sample.append([sample_size, current])
+    print("Number of Samples:", sample_size,", Calculated Power =", null_rejected)
+    power_sample.append([sample_size, null_rejected])
 
     # increase the number of samples by one for the next iteration of the loop
     sample_size += 1
@@ -214,33 +231,15 @@ while current < target:
     Number of Samples: 23 , Calculated Power = 0.7624
     Number of Samples: 24 , Calculated Power = 0.7864
     Number of Samples: 25 , Calculated Power = 0.8031
-    Number of Samples: 26 , Calculated Power = 0.8178
-    Number of Samples: 27 , Calculated Power = 0.8354
-    Number of Samples: 28 , Calculated Power = 0.8405
-    Number of Samples: 29 , Calculated Power = 0.8568
-    Number of Samples: 30 , Calculated Power = 0.8736
-    Number of Samples: 31 , Calculated Power = 0.8786
-    Number of Samples: 32 , Calculated Power = 0.89
-    Number of Samples: 33 , Calculated Power = 0.8975
-    Number of Samples: 34 , Calculated Power = 0.9077
-    Number of Samples: 35 , Calculated Power = 0.9146
-    Number of Samples: 36 , Calculated Power = 0.9188
-    Number of Samples: 37 , Calculated Power = 0.9292
-    Number of Samples: 38 , Calculated Power = 0.9369
-    Number of Samples: 39 , Calculated Power = 0.9369
-    Number of Samples: 40 , Calculated Power = 0.9482
-    Number of Samples: 41 , Calculated Power = 0.9521
 
 
-We can also plot calculated power against sample size to visually inspect the effect of increasing sample size. 
+You can also plot the calculated power against sample size to visually inspect the effect of increasing sample size. 
 
 
 ```python
 # Plot a sample size X Power line graph 
 
-from pylab import rcParams
-rcParams['figure.figsize'] = 10, 5
-plt.figure()
+plt.figure(figsize=(10,5))
 plt.title('Power vs. Sample Size')
 plt.xlabel('Sample Size')
 plt.ylabel('Power')
@@ -253,10 +252,10 @@ plt.show()
 ```
 
 
-![png](index_files/index_14_0.png)
+![png](index_files/index_17_0.png)
 
 
-Above output tells us that for our researcher, in order to get the required power (95%) for the observed effect of 0.17 , he would need considerably higher number of patients in each group i.e. 41. 
+This output indicates that in order to get the required power (80%) to detect a difference of 0.17, you would need considerably higher number of patients. 
 
 >**BONUS EXERCISE: Calculating power across varying sample and effect sizes**
 
@@ -268,6 +267,56 @@ Above output tells us that for our researcher, in order to get the required powe
 4. Use nested For loop i.e. for all chosen effect sizes,for all chosen sample sizes, for all groups (i.e. 2) - run the 2 sample independant test and store power, chosen sample size and effect size
 5. Visualize your data in a meaningful way to communicate results 
 
+
+```python
+def power_curve(min_sample_size = 10, max_sample_size=500, n_sim = 10000, control_mean = 0,
+                control_sd = 0.21, experimental_mean = 0.17, experimental_sd = 0.21):
+    p = (np.empty(n_sim))
+    p.fill(np.nan)
+
+    # keep iterating until desired power is obtained
+
+    power_sample = []
+    for sample_size in range(min_sample_size, max_sample_size, 5):
+
+        data = np.empty([n_sim, sample_size, 2])
+        data.fill(np.nan)
+
+        # For control group 
+        data[:,:,0] = np.random.normal(loc=control_mean, scale=control_sd, size=[n_sim, sample_size])
+
+        # For experimental group
+        data[:,:,1] = np.random.normal(loc=experimental_mean, scale=experimental_sd, size=[n_sim, sample_size])            
+
+        result = stats.ttest_ind(data[:, :, 0],data[:, :, 1],axis=1)
+
+        p_vals = result[1]
+
+        #Since you know that all simulations are from a different distribution \
+        #all those that rejected the null-hypothesis are valid
+        null_rejected = np.sum(p_vals < 0.05) / n_sim
+
+        power_sample.append(null_rejected)
+
+    return power_sample
+cols = {}
+
+for exp_mean in [0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5]:
+    col = power_curve(experimental_mean=exp_mean)
+    cols[exp_mean] = col
+df = pd.DataFrame.from_dict(cols)
+df.index = list(range(10,500,5))
+df.plot(figsize=(10,10))
+plt.legend(title='Effect Size',loc=(1,0.8))
+plt.title('Power Curves for Various Sample Sizes and Effect Sizes with Alpha=0.05')
+plt.xlabel('Sample Size')
+plt.ylabel('Power');
+```
+
+
+![png](index_files/index_20_0.png)
+
+
 ## Summary
 
-In this lesson, we recieved an understanding around the idea of "statistical power" and how sample size, p_value and effect size impact the power of an experiment. We ran a simulation to determine the sample size that would provide a given value of power. In the second simulation, we saw the combined effect of sample size and effect size on the power. We can conclude this lesson with the ideas that a) Statistical power increases as we increase the sample size and b) with a small effect size, we require a large number of samples to achieve required power and vice versa. 
+In this lesson, you gained further practice with "statistical power" and how it can be used to analyze experimental design. You ran a simulation to determine the sample size that would provide a given value of power (for a given alpha and effect size). Running simulations like this as well as further investigations regarding required sample sizes for higher power thresholds or smaller effect sizes is critical in designing meaningful experiments where one can be confident in the subsequent conclusions drawn.
