@@ -4,7 +4,7 @@
 ## Introduction
 
 
-In this lesson, we will consider a general-purpose simulation approach to estimating the power of an experimental design. Power analysis is an important aspect of experimental design. It allows us to determine the sample size required to detect an effect of a given size with a given degree of confidence. In other words, it allows us to determine the probability of detecting an effect of a given size with a given level of confidence, under sample size constraints. If this probability is unacceptably low, we would be wise to alter or abandon the experiment.
+In this lesson, you'll practice doing a power-analysis during experimental design. As you've seen, power analysis allows you to determine the sample size required to detect an effect of a given size with a given degree of confidence. In other words, it allows you to determine the probability of detecting an effect of a given size with a given level of confidence, under sample size constraints.
 
 The following four factors have an intimate relationship:
 
@@ -27,7 +27,7 @@ You will be able to:
 
 ## Let's get started!
   
-To start, let's import the necessary libraries required for this simuation:
+To start, let's import the necessary libraries required for this simuation:.
 
 
 ```python
@@ -41,7 +41,7 @@ import matplotlib.pyplot as plt
 
 A researcher wants to study how daily protein supplementation in the elderly population will affect baseline liver fat. The study budget will allow enrollment of 24 patients. Half will be randomized to a placebo group and half to the protein supplement treatment group and the trial will be carried out over one month. It is desired to see whether the mean change in percentage of liver fat from baseline to the end of the study differs between the two groups in the study. 
 
-So we have the null hypothesis 
+With this, the researcher writes the null hypothesis 
 
 **There is no difference between experimental and control means i.e. H0 is equal to H1**
 
@@ -51,7 +51,7 @@ And the alternative Hypothesis
 
 The researcher needs to know what power  will be obtained under the sample size restrictions to identify a change in mean percent liver fat of 0.17. Based on past results, a common standard deviation of 0.21 will be used for each treatment group in the power analysis. 
 
-We will run a simulation with above information to calculate the power expected from the given sample size. From above we have following data to work with. 
+To determine the practicality of this experimental design, you'll a power analysis simulation.
 
 
 ```python
@@ -70,9 +70,9 @@ experimental_sd = None
 n_sim = None
 ```
 
-We can now start running our simulations to run an independance t-test with above data and store the calculated p_value in our `p` array. Perform following tasks.
+You can now start running our simulations to run an independance t-test with above data and store the calculated p_value in our `p` array. Perform following tasks.
 
-* Initialize a numpy array and fill it with Nan values for storing the results (p_value) of our independance T-test.
+* Initialize a numpy array and fill it with Nan values for storing the results (p_value) of the independance T-test.
 * For defined number of simulations (i.e. 1000), do the following:
 
     * Generate a random normal variable with control mean and sd
@@ -103,17 +103,15 @@ reject_proportion
 # 0.495
 ```
 
-Our results tell us that using 12 participants in each group and with given statistics, the power we obtain is 49% for our test settings. This can be interpreted as follows:
+These results indicate that using 12 participants in each group and with given statistics, the statistical power of the experimetn is 49%. This can be interpreted as follows:
 
-> **If a large effect is truly present between control and experimental groups, then the null hypothesis (i.e. no difference with alpha 0.05) would be rejected 49% of times. **
+> **If a large effect (.17 or greater) is truly present between control and experimental groups, then the null hypothesis (i.e. no difference with alpha 0.05) would be rejected 49% of the time. **
 
 ## Sample size requirements for a given effect size
 
-The researcher conducting this experiment is not satisfied with the results of power calculations shown above, and would like to work out what sample size is required in order to be able to reject the null hypothesis 95% of times that an effect size of 0.17 exists between control and experimental group means. (as compared to 49% with current sample size). 
+Often in behavioral research .8 is accepted as a sufficient level of power.  
 
-To achieve this, we shall move on to a more common scenario, where a design and effect size is decided and we would like to know what sample size is needed to achieve a particular power. This is a straightforward extension of the previous example: we begin with a current sample size and calculate the associated power. We then perform such a calculation repeatedly, each time increasing the sample size, until the power has reached the desired level.
-
-Let's define our experimental parameters. 
+Clearly, this is not the case for the experiment as currently designed. Determine the required sample size in order to identify a difference of .17 or greater between the group means with an 80% power.
 
 
 ```python
@@ -157,7 +155,7 @@ power_sample = []
     
 ```
 
-We can also plot calculated power against sample size to visually inspect the effect of increasing sample size. 
+You can also plot the calculated power against sample size to visually inspect the effect of increasing sample size. 
 
 
 ```python
@@ -168,7 +166,7 @@ rcParams['figure.figsize'] = 10, 5
 
 ```
 
-Above output tells us that for our researcher, in order to get the required power (95%) for the observed effect of 0.17 , he would need considerably higher number of patients in each group i.e. 41. 
+This output indicates that in order to get the required power (80%) to detect a difference of 0.17, you would need considerably higher number of patients. 
 
 >**BONUS EXERCISE: Calculating power across varying sample and effect sizes**
 
@@ -182,4 +180,4 @@ Above output tells us that for our researcher, in order to get the required powe
 
 ## Summary
 
-In this lesson, we recieved an understanding around the idea of "statistical power" and how sample size, p_value and effect size impact the power of an experiment. We ran a simulation to determine the sample size that would provide a given value of power. In the second simulation, we saw the combined effect of sample size and effect size on the power. We can conclude this lesson with the ideas that a) Statistical power increases as we increase the sample size and b) with a small effect size, we require a large number of samples to achieve required power and vice versa. 
+In this lesson, you gained further practice with "statistical power" and how it can be used to analyze experimental design. You ran a simulation to determine the sample size that would provide a given value of power (for a given alpha and effect size). Running simulations like this as well as further investigations regarding required sample sizes for higher power thresholds or smaller effect sizes is critical in designing meaningful experiments where one can be confident in the subsequent conclusions drawn.
