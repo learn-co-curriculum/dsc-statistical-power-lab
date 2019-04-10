@@ -157,8 +157,6 @@ power.solve_power(effect_size=.17, alpha=0.05, power=.8)
 target = 0.8
 ```
 
-We will also need to define the number of simulations and a `current` variable for an iterative comparison with target power defined. We shall start with a sample size of 12 (current) and keep increasing it until the required power is achieved. We shall also increase the number of simulations to 10,000 for a more deterministic output. 
-
 
 ```python
 # minimum sample size to start the simulations 
@@ -252,7 +250,7 @@ plt.show()
 ```
 
 
-![png](index_files/index_17_0.png)
+![png](index_files/index_16_0.png)
 
 
 This output indicates that in order to get the required power (80%) to detect a difference of 0.17, you would need considerably higher number of patients. 
@@ -314,7 +312,7 @@ plt.ylabel('Power');
 ```
 
 
-![png](index_files/index_20_0.png)
+![png](index_files/index_19_0.png)
 
 
 ## Summary
