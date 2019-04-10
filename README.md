@@ -160,10 +160,6 @@ You can also plot the calculated power against sample size to visually inspect t
 
 ```python
 # Plot a sample size X Power line graph 
-
-from pylab import rcParams
-rcParams['figure.figsize'] = 10, 5
-
 ```
 
 This output indicates that in order to get the required power (80%) to detect a difference of 0.17, you would need considerably higher number of patients. 
