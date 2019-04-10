@@ -119,8 +119,6 @@ Clearly, this is not the case for the experiment as currently designed. Determin
 target = None
 ```
 
-We will also need to define the number of simulations and a `current` variable for an iterative comparison with target power defined. We shall start with a sample size of 12 (current) and keep increasing it until the required power is achieved. We shall also increase the number of simulations to 10,000 for a more deterministic output. 
-
 
 ```python
 # minimum sample size to start the simulations 
