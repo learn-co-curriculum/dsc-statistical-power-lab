@@ -96,9 +96,9 @@ p.fill(np.nan)
 
 # number of null hypothesis rejections
 num_null_rejects = None
-reject_proportion = None
+power = None
 
-reject_proportion
+power
 
 # 0.495
 ```
