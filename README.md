@@ -193,6 +193,9 @@ while null_rejected < target:
     data.fill(np.nan)
     
     # For control group 
+    # Here we specify size=[n_sim, sample_size] which creates an array of n_sim number of arrays,
+    # each containing sample_size number of elements. 
+    # This is equivalent to manually looping n_sim times like we did above but is much faster.
     data[:,:,0] = np.random.normal(loc=control_mean, scale=control_sd, size=[n_sim, sample_size])
     
     # For experimental group
@@ -243,7 +246,7 @@ plt.xlabel('Sample Size')
 plt.ylabel('Power')
 
 ans = power_sample
-df = pandas.DataFrame(ans, index=None)
+df = pd.DataFrame(ans, index=None)
 plt.plot(df[0], df[1])
 
 plt.show()
@@ -312,10 +315,6 @@ plt.title('Power Curves for Various Sample Sizes and Effect Sizes with Alpha=0.0
 plt.xlabel('Sample Size')
 plt.ylabel('Power');
 ```
-
-
-![png](index_files/index_19_0.png)
-
 
 ## Summary
 
