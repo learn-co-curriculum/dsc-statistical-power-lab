@@ -37,6 +37,17 @@ import pandas
 import matplotlib.pyplot as plt
 ```
 
+
+```python
+# __SOLUTION__ 
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_style('darkgrid')
+```
+
 ## Scenario
 
 A researcher wants to study how daily protein supplementation in the elderly population will affect baseline liver fat. The study budget will allow enrollment of 24 patients. Half will be randomized to a placebo group and half to the protein supplement treatment group and the trial will be carried out over one month. It is desired to see whether the mean change in percentage of liver fat from baseline to the end of the study differs between the two groups in the study. 
@@ -68,6 +79,24 @@ experimental_sd = None
 
 #Set the number of simulations for our test = 1000
 n_sim = None
+```
+
+
+```python
+# __SOLUTION__ 
+# Number of patients in each group
+sample_size = 12
+
+# Control group
+control_mean = 0
+control_sd = 0.21
+
+# Experimental group
+experimental_mean = 0.17
+experimental_sd = 0.21
+
+#Set the number of simulations for our test = 1000
+n_sim = 1000
 ```
 
 You can now start running our simulations to run an independance t-test with above data and store the calculated p_value in our `p` array. Perform following tasks.
@@ -103,6 +132,42 @@ power
 # 0.495
 ```
 
+
+```python
+# __SOLUTION__ 
+# For reproducability 
+np.random.seed(10)
+
+# Initialize array to store results
+p = (np.empty(n_sim))
+p.fill(np.nan)
+
+#  Run a for loop for range of values in n_sim
+
+for s in range(n_sim):
+
+    control = np.random.normal(loc= control_mean, scale=control_sd, size=sample_size)
+    
+    experimental = np.random.normal(loc= experimental_mean, scale=experimental_sd, size=sample_size)
+    
+    t_test = stats.ttest_ind(control, experimental)
+    
+    p[s] = t_test[1]
+
+# number of null hypothesis rejections
+num_null_rejects = np.sum(p < 0.05)
+power = num_null_rejects/float(n_sim)
+
+power
+```
+
+
+
+
+    0.495
+
+
+
 These results indicate that using 12 participants in each group and with given statistics, the statistical power of the experiment is 49%. This can be interpreted as follows:
 
 > **If a large effect (.17 or greater) is truly present between control and experimental groups, then the null hypothesis (i.e. no difference with alpha 0.05) would be rejected 49% of the time. **
@@ -124,6 +189,46 @@ target = None
 # minimum sample size to start the simulations 
 sample_size = 12
 current = 0
+n_sim = 10000
+```
+
+
+```python
+# __SOLUTION__ 
+from statsmodels.stats.power import TTestPower
+```
+
+
+```python
+# __SOLUTION__ 
+power = TTestPower()
+```
+
+
+```python
+# __SOLUTION__ 
+power.solve_power(effect_size=.17, alpha=0.05, power=.8)
+```
+
+
+
+
+    273.51381725963785
+
+
+
+
+```python
+# __SOLUTION__ 
+target = 0.8
+```
+
+
+```python
+# __SOLUTION__ 
+# minimum sample size to start the simulations 
+sample_size = 12
+null_rejected = 0
 n_sim = 10000
 ```
 
@@ -153,12 +258,91 @@ power_sample = []
     
 ```
 
+
+```python
+# __SOLUTION__ 
+np.random.seed(10)
+
+p = (np.empty(n_sim))
+p.fill(np.nan)
+
+# keep iterating until desired power is obtained
+
+power_sample = []
+while null_rejected < target:
+
+    data = np.empty([n_sim, sample_size, 2])
+    data.fill(np.nan)
+    
+    # For control group 
+    # Here we specify size=[n_sim, sample_size] which creates an array of n_sim number of arrays,
+    # each containing sample_size number of elements. 
+    # This is equivalent to manually looping n_sim times like we did above but is much faster.
+    data[:,:,0] = np.random.normal(loc=control_mean, scale=control_sd, size=[n_sim, sample_size])
+    
+    # For experimental group
+    data[:,:,1] = np.random.normal(loc=experimental_mean, scale=experimental_sd, size=[n_sim, sample_size])            
+    
+    result = stats.ttest_ind(data[:, :, 0],data[:, :, 1],axis=1)
+                                
+    p_vals = result[1]
+
+    #Since you know that all simulations are from a different distribution \
+    #all those that rejected the null-hypothesis are valid
+    null_rejected = np.sum(p_vals < 0.05) / n_sim
+
+    print("Number of Samples:", sample_size,", Calculated Power =", null_rejected)
+    power_sample.append([sample_size, null_rejected])
+
+    # increase the number of samples by one for the next iteration of the loop
+    sample_size += 1
+    
+    
+```
+
+    Number of Samples: 12 , Calculated Power = 0.4754
+    Number of Samples: 13 , Calculated Power = 0.5066
+    Number of Samples: 14 , Calculated Power = 0.5423
+    Number of Samples: 15 , Calculated Power = 0.5767
+    Number of Samples: 16 , Calculated Power = 0.6038
+    Number of Samples: 17 , Calculated Power = 0.6297
+    Number of Samples: 18 , Calculated Power = 0.658
+    Number of Samples: 19 , Calculated Power = 0.6783
+    Number of Samples: 20 , Calculated Power = 0.7056
+    Number of Samples: 21 , Calculated Power = 0.7266
+    Number of Samples: 22 , Calculated Power = 0.7481
+    Number of Samples: 23 , Calculated Power = 0.7624
+    Number of Samples: 24 , Calculated Power = 0.7864
+    Number of Samples: 25 , Calculated Power = 0.8031
+
+
 You can also plot the calculated power against sample size to visually inspect the effect of increasing sample size. 
 
 
 ```python
 # Plot a sample size X Power line graph 
 ```
+
+
+```python
+# __SOLUTION__ 
+# Plot a sample size X Power line graph 
+
+plt.figure(figsize=(10,5))
+plt.title('Power vs. Sample Size')
+plt.xlabel('Sample Size')
+plt.ylabel('Power')
+
+ans = power_sample
+df = pd.DataFrame(ans, index=None)
+plt.plot(df[0], df[1])
+
+plt.show()
+```
+
+
+![png](index_files/index_23_0.png)
+
 
 This output indicates that in order to get the required power (80%) to detect a difference of 0.17, you would need considerably higher number of patients. 
 
@@ -173,6 +357,53 @@ To do this, run multiple simulations for varying parameters. Then store the para
 3. Use the sample sizes from 10 to 500
 4. For each effect size sample size combination, calculate the accompanying power
 5. Plot a line graph of the power vs sample size relationship. You should have 7 plots; one for each of the effect sizes listed above. All 7 plots can be on the same graph, but should be labelled appropriately. Plot the power on the y-axis and sample size on the x-axis.
+
+
+```python
+# __SOLUTION__ 
+def power_curve(min_sample_size = 10, max_sample_size=500, n_sim = 10000, control_mean = 0,
+                control_sd = 0.21, experimental_mean = 0.17, experimental_sd = 0.21):
+    p = (np.empty(n_sim))
+    p.fill(np.nan)
+
+    # keep iterating until desired power is obtained
+
+    power_sample = []
+    for sample_size in range(min_sample_size, max_sample_size, 5):
+
+        data = np.empty([n_sim, sample_size, 2])
+        data.fill(np.nan)
+
+        # For control group 
+        data[:,:,0] = np.random.normal(loc=control_mean, scale=control_sd, size=[n_sim, sample_size])
+
+        # For experimental group
+        data[:,:,1] = np.random.normal(loc=experimental_mean, scale=experimental_sd, size=[n_sim, sample_size])            
+
+        result = stats.ttest_ind(data[:, :, 0],data[:, :, 1],axis=1)
+
+        p_vals = result[1]
+
+        #Since you know that all simulations are from a different distribution \
+        #all those that rejected the null-hypothesis are valid
+        null_rejected = np.sum(p_vals < 0.05) / n_sim
+
+        power_sample.append(null_rejected)
+
+    return power_sample
+cols = {}
+
+for exp_mean in [0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5]:
+    col = power_curve(experimental_mean=exp_mean)
+    cols[exp_mean] = col
+df = pd.DataFrame.from_dict(cols)
+df.index = list(range(10,500,5))
+df.plot(figsize=(10,10))
+plt.legend(title='Effect Size',loc=(1,0.8))
+plt.title('Power Curves for Various Sample Sizes and Effect Sizes with Alpha=0.05')
+plt.xlabel('Sample Size')
+plt.ylabel('Power');
+```
 
 ## Summary
 
