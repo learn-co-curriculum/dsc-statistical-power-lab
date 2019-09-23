@@ -361,7 +361,7 @@ To do this, run multiple simulations for varying parameters. Then store the para
 
 ```python
 # __SOLUTION__ 
-def power_curve(min_sample_size = 10, max_sample_size=500, n_sim = 10000, control_mean = 0,
+def power_curve(min_sample_size = 10, max_sample_size=500, n_sim = 1000, control_mean = 0,
                 control_sd = 0.21, experimental_mean = 0.17, experimental_sd = 0.21):
     p = (np.empty(n_sim))
     p.fill(np.nan)
