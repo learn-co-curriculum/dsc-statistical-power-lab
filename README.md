@@ -4,7 +4,7 @@
 ## Introduction
 
 
-In this lesson, you'll practice doing a power-analysis during experimental design. As you've seen, power analysis allows you to determine the sample size required to detect an effect of a given size with a given degree of confidence. In other words, it allows you to determine the probability of detecting an effect of a given size with a given level of confidence, under sample size constraints.
+In this lesson, you'll practice doing a power-analysis during experimental design. As you've seen, power analysis allows you to determine the sample size required to detect an effect of a given size with a given degree of confidence. In other words, it allows you to determine the probability of detecting an effect of a given size with a given level of confidence, under-sample size constraints.
 
 The following four factors have an intimate relationship:
 
@@ -27,7 +27,7 @@ You will be able to:
 
 ## Let's get started!
   
-To start, let's import the necessary libraries required for this simuation:.
+To start, let's import the necessary libraries required for this simulation:.
 
 
 ```python
@@ -70,14 +70,14 @@ experimental_sd = None
 n_sim = None
 ```
 
-You can now start running our simulations to run an independance t-test with above data and store the calculated p_value in our `p` array. Perform following tasks.
+You can now start running our simulations to run an independent t-test with above data and store the calculated p_value in our `p` array. Perform following tasks.
 
-* Initialize a numpy array and fill it with Nan values for storing the results (p_value) of the independance T-test.
-* For defined number of simulations (i.e. 1000), do the following:
+* Initialize a numpy array and fill it with Nan values for storing the results (p_value) of the independent T-test.
+* For a defined number of simulations (i.e. 1000), do the following:
 
     * Generate a random normal variable with control mean and sd
     * Generate a random normal variable with experimental mean and sd
-    * Run and independant t-test using control and experimental data
+    * Run and independent t-test using control and experimental data
     * Store the p value for each test
 
 * Calculate the total number and overall proportion of simulations and where Null hypothesis is rejected
@@ -85,7 +85,8 @@ You can now start running our simulations to run an independance t-test with abo
 
 
 ```python
-# For reproducability 
+# For reproducibility 
+
 np.random.seed(10)
 
 # Initialize array to store results
@@ -130,13 +131,13 @@ n_sim = 10000
 As above, perform the following
 
 * Initialize an empty array for storing results
-* initiliaze a list for storing samplesize x power summary
-* While current power is less than target power
+* initialize a list for storing sample size x power summary
+* While current power is less than the target power
     * Generate distributions for control and experimental groups using given statistics (as before)
     * Run a t-test and store results
     * Calculate current power 
     * Output current sample size and power calculated for inspection
-    * Store results: Sample size , power
+    * Store results: Sample size, power
     * increase the sample size by 1 and repeat
 
 
@@ -160,11 +161,11 @@ You can also plot the calculated power against sample size to visually inspect t
 # Plot a sample size X Power line graph 
 ```
 
-This output indicates that in order to get the required power (80%) to detect a difference of 0.17, you would need considerably higher number of patients. 
+This output indicates that in order to get the required power (80%) to detect a difference of 0.17, you would need a considerably higher number of patients. 
 
 ## BONUS: Investigating the Relationship Between Power, Sample Size and Effect Size
 
-You've seen how to calculate power given alpha, sample size and effect size. To further investigate this relationship, it is interesting to plot the relationship between power and sample size for various effect sizes. 
+You've seen how to calculate power given alpha, sample size, and effect size. To further investigate this relationship, it is interesting to plot the relationship between power and sample size for various effect sizes. 
 
 To do this, run multiple simulations for varying parameters. Then store the parameters and plot the resulting dataset. Specifically:
 
@@ -172,8 +173,8 @@ To do this, run multiple simulations for varying parameters. Then store the para
 2. Use the following effect sizes: [0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5]
 3. Use the sample sizes from 10 to 500
 4. For each effect size sample size combination, calculate the accompanying power
-5. Plot a line graph of the power vs sample size relationship. You should have 7 plots; one for each of the effect sizes listed above. All 7 plots can be on the same graph, but should be labelled appropriately. Plot the power on the y-axis and sample size on the x-axis.
+5. Plot a line graph of the power vs sample size relationship. You should have 7 plots; one for each of the effect sizes listed above. All 7 plots can be on the same graph but should be labeled appropriately. Plot the power on the y-axis and sample size on the x-axis.
 
 ## Summary
 
-In this lesson, you gained further practice with "statistical power" and how it can be used to analyze experimental design. You ran a simulation to determine the sample size that would provide a given value of power (for a given alpha and effect size). Running simulations like this as well as further investigations regarding required sample sizes for higher power thresholds or smaller effect sizes is critical in designing meaningful experiments where one can be confident in the subsequent conclusions drawn.
+In this lesson, you gained further practice with "statistical power" and how it can be used to analyze experimental design. You ran a simulation to determine the sample size that would provide a given value of power (for a given alpha and effect size). Running simulations like this, as well as further investigations regarding required sample sizes for higher power thresholds or smaller effect sizes, is critical in designing meaningful experiments where one can be confident in the subsequent conclusions drawn.
