@@ -17,24 +17,24 @@ Given any three of these, we can easily determine the fourth.
 
 ## Objectives
 
-You will be able to:
+In this lab you will: 
 
-* Describe the concept of “Power” in relation to p-value and effect size for hypothesis testing
-* Understand and critically evaluate the factors influencing the power of an experiment
-* Perform Power calculation using SciPy and Python
-* Demonstrate the impact of sample size on statistical power using simulations
-* Demonstrate the combined effect of sample size and effect size on statistical power using simulations  
+- Describe the impact of sample size and effect size on power 
+- Perform power calculation using SciPy and Python 
+- Demonstrate the combined effect of sample size and effect size on statistical power using simulations
 
 ## Let's get started!
   
-To start, let's import the necessary libraries required for this simulation:.
+To start, let's import the necessary libraries required for this simulation: 
 
 
 ```python
 import numpy as np
 import scipy.stats as stats
-import pandas
+import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_style('darkgrid')
 ```
 
 
@@ -54,15 +54,21 @@ A researcher wants to study how daily protein supplementation in the elderly pop
 
 With this, the researcher writes the null hypothesis: 
 
-    There is no difference between experimental and control means i.e. H0 is equal to H1
-
+    There is no difference between experimental and control means
+    
+$$\mu_{1} = \mu_{2}$$
+  
 And the alternative Hypothesis:
 
-    There is a difference between experimental and control means i.e. H0 is not equal to H1
+    There is a difference between experimental and control means 
+
+$$\mu_{1} \neq \mu_{2}$$
+    
+  
 
 The researcher needs to know what power  will be obtained under the sample size restrictions to identify a change in mean percent liver fat of 0.17. Based on past results, a common standard deviation of 0.21 will be used for each treatment group in the power analysis. 
 
-To determine the practicality of this experimental design, you'll a power analysis simulation.
+To determine the practicality of this experimental design, you'll run a power analysis simulation: 
 
 
 ```python
@@ -77,7 +83,7 @@ control_sd = None
 experimental_mean = None
 experimental_sd = None
 
-#Set the number of simulations for our test = 1000
+# Set the number of simulations for our test = 1000
 n_sim = None
 ```
 
@@ -95,27 +101,26 @@ control_sd = 0.21
 experimental_mean = 0.17
 experimental_sd = 0.21
 
-#Set the number of simulations for our test = 1000
+# Set the number of simulations for our test = 1000
 n_sim = 1000
 ```
 
-You can now start running our simulations to run an independent t-test with above data and store the calculated p_value in our `p` array. Perform following tasks.
+You can now start running simulations to run an independent t-test with above data and store the calculated p-value in our `p` array. Perform following tasks: 
 
-* Initialize a numpy array and fill it with Nan values for storing the results (p_value) of the independent T-test.
-* For a defined number of simulations (i.e. 1000), do the following:
+* Initialize a numpy array and fill it with `NaN` values for storing the results (p_value) of the independent t-test  
+* For a defined number of simulations (i.e., 1000), do the following:
 
     * Generate a random normal variable with control mean and sd
     * Generate a random normal variable with experimental mean and sd
     * Run and independent t-test using control and experimental data
     * Store the p value for each test
 
-* Calculate the total number and overall proportion of simulations and where Null hypothesis is rejected
+* Calculate the total number and overall proportion of simulations where the null hypothesis is rejected
 
 
 
 ```python
 # For reproducibility 
-
 np.random.seed(10)
 
 # Initialize array to store results
@@ -171,63 +176,71 @@ power
 
 These results indicate that using 12 participants in each group and with given statistics, the statistical power of the experiment is 49%. This can be interpreted as follows:
 
-> **If a large effect (.17 or greater) is truly present between control and experimental groups, then the null hypothesis (i.e. no difference with alpha 0.05) would be rejected 49% of the time. **
+> **If a large effect (0.17 or greater) is truly present between control and experimental groups, then the null hypothesis (i.e. no difference with alpha 0.05) would be rejected 49% of the time. **
 
 ## Sample size requirements for a given effect size
 
-Often in behavioral research .8 is accepted as a sufficient level of power.  
+Often in behavioral research 0.8 is accepted as a sufficient level of power.  
 
-Clearly, this is not the case for the experiment as currently designed. Determine the required sample size in order to identify a difference of .17 or greater between the group means with an 80% power.
-
-
-```python
-# required power 0.95
-target = None
-```
+Clearly, this is not the case for the experiment as currently designed. Determine the required sample size in order to identify a difference of 0.17 or greater between the group means with an 80% power.
 
 
 ```python
-# minimum sample size to start the simulations 
-sample_size = 12
-current = 0
-n_sim = 10000
-```
-
-
-```python
-# __SOLUTION__ 
-from statsmodels.stats.power import TTestPower
-```
-
-
-```python
-# __SOLUTION__ 
-power = TTestPower()
-```
-
-
-```python
-# __SOLUTION__ 
-power.solve_power(effect_size=.17, alpha=0.05, power=.8)
-```
-
-
-
-
-    273.51381725963785
-
-
-
-
-```python
-# __SOLUTION__ 
+# Required power
 target = 0.8
 ```
 
 
 ```python
 # __SOLUTION__ 
-# minimum sample size to start the simulations 
+# Required power
+target = 0.8
+```
+
+
+```python
+from statsmodels.stats.power import TTestIndPower
+power = TTestIndPower()
+```
+
+
+```python
+# __SOLUTION__ 
+from statsmodels.stats.power import TTestIndPower
+power = TTestIndPower()
+```
+
+
+```python
+# Determine the sample size
+
+```
+
+
+```python
+# __SOLUTION__ 
+power.solve_power(effect_size=0.17/0.21, alpha=0.05, power=0.8)
+```
+
+
+
+
+    24.951708908275144
+
+
+
+
+```python
+# Minimum sample size to start the simulations 
+sample_size = 12
+null_rejected = 0
+n_sim = 10000
+```
+
+
+```python
+# __SOLUTION__ 
+# Minimum sample size to start the simulations 
 sample_size = 12
 null_rejected = 0
 n_sim = 10000
@@ -254,7 +267,7 @@ p.fill(np.nan)
 
 power_sample = []
 
-# keep iterating as shown above until desired power is obtained
+# Keep iterating as shown above until desired power is obtained
 
     
 ```
@@ -267,7 +280,7 @@ np.random.seed(10)
 p = (np.empty(n_sim))
 p.fill(np.nan)
 
-# keep iterating until desired power is obtained
+# Keep iterating until desired power is obtained
 
 power_sample = []
 while null_rejected < target:
@@ -288,11 +301,11 @@ while null_rejected < target:
                                 
     p_vals = result[1]
 
-    #Since you know that all simulations are from a different distribution \
-    #all those that rejected the null-hypothesis are valid
+    # Since you know that all simulations are from a different distribution \
+    # all those that rejected the null-hypothesis are valid
     null_rejected = np.sum(p_vals < 0.05) / n_sim
 
-    print("Number of Samples:", sample_size,", Calculated Power =", null_rejected)
+    print('Number of Samples:', sample_size,', Calculated Power =', null_rejected)
     power_sample.append([sample_size, null_rejected])
 
     # increase the number of samples by one for the next iteration of the loop
@@ -342,12 +355,12 @@ plt.show()
 ```
 
 
-![png](index_files/index_23_0.png)
+![png](index_files/index_24_0.png)
 
 
 This output indicates that in order to get the required power (80%) to detect a difference of 0.17, you would need a considerably higher number of patients. 
 
-## BONUS: Investigating the Relationship Between Power, Sample Size and Effect Size
+## BONUS: Investigating the relationship between Power, Sample Size, and Effect Size
 
 You've seen how to calculate power given alpha, sample size, and effect size. To further investigate this relationship, it is interesting to plot the relationship between power and sample size for various effect sizes. 
 
@@ -361,13 +374,18 @@ To do this, run multiple simulations for varying parameters. Then store the para
 
 
 ```python
+
+```
+
+
+```python
 # __SOLUTION__ 
 def power_curve(min_sample_size = 10, max_sample_size=500, n_sim = 1000, control_mean = 0,
                 control_sd = 0.21, experimental_mean = 0.17, experimental_sd = 0.21):
     p = (np.empty(n_sim))
     p.fill(np.nan)
 
-    # keep iterating until desired power is obtained
+    # Keep iterating until desired power is obtained
 
     power_sample = []
     for sample_size in range(min_sample_size, max_sample_size, 5):
@@ -385,8 +403,8 @@ def power_curve(min_sample_size = 10, max_sample_size=500, n_sim = 1000, control
 
         p_vals = result[1]
 
-        #Since you know that all simulations are from a different distribution \
-        #all those that rejected the null-hypothesis are valid
+        # Since you know that all simulations are from a different distribution \
+        # all those that rejected the null-hypothesis are valid
         null_rejected = np.sum(p_vals < 0.05) / n_sim
 
         power_sample.append(null_rejected)
@@ -406,6 +424,10 @@ plt.xlabel('Sample Size')
 plt.ylabel('Power');
 ```
 
+
+![png](index_files/index_28_0.png)
+
+
 ## Summary
 
-In this lesson, you gained further practice with "statistical power" and how it can be used to analyze experimental design. You ran a simulation to determine the sample size that would provide a given value of power (for a given alpha and effect size). Running simulations like this, as well as further investigations regarding required sample sizes for higher power thresholds or smaller effect sizes, is critical in designing meaningful experiments where one can be confident in the subsequent conclusions drawn.
+In this lesson, you gained further practice with "statistical power" and how it can be used to analyze experimental design. You ran a simulation to determine the sample size that would provide a given value of power (for a given alpha and effect size). Running simulations like this, as well as further investigations regarding required sample sizes for higher power thresholds or smaller effect sizes is critical in designing meaningful experiments where one can be confident in the subsequent conclusions drawn.
