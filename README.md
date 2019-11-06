@@ -54,13 +54,13 @@ A researcher wants to study how daily protein supplementation in the elderly pop
 
 With this, the researcher writes the null hypothesis: 
 
-    There is no difference between experimental and control means
+    There is no difference between experimental and control group mean change in percentage of liver fat 
     
 $$\mu_{1} = \mu_{2}$$
   
 And the alternative Hypothesis:
 
-    There is a difference between experimental and control means 
+    There is a difference between experimental and control group mean change in percentage of liver fat 
 
 $$\mu_{1} \neq \mu_{2}$$
     
@@ -141,7 +141,7 @@ power
 
 ```python
 # __SOLUTION__ 
-# For reproducability 
+# For reproducibility 
 np.random.seed(10)
 
 # Initialize array to store results
