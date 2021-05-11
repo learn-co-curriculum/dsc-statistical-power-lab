@@ -83,7 +83,7 @@ You can now start running simulations to run an independent t-test with above da
 
     * Generate a random normal variable with control mean and sd
     * Generate a random normal variable with experimental mean and sd
-    * Run and independent t-test using control and experimental data
+    * Run an independent t-test using control and experimental data
     * Store the p value for each test
 
 * Calculate the total number and overall proportion of simulations where the null hypothesis is rejected
