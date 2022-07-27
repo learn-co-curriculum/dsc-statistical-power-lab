@@ -1,19 +1,9 @@
-
 # Statistical Power - Lab
 
 ## Introduction
 
 
 In this lesson, you'll practice doing a power-analysis during experimental design. As you've seen, power analysis allows you to determine the sample size required to detect an effect of a given size with a given degree of confidence. In other words, it allows you to determine the probability of detecting an effect of a given size with a given level of confidence, under-sample size constraints.
-
-The following four factors have an intimate relationship:
-
-* Sample size
-* Effect size
-* Significance level = P (Type I error) = probability of finding an effect that is not there
-* **Power = 1 - P (Type II error)** = probability of finding an effect that is there
-
-Given any three of these, we can easily determine the fourth.
 
 ## Objectives
 
@@ -24,6 +14,15 @@ In this lab you will:
 - Demonstrate the combined effect of sample size and effect size on statistical power using simulations
 
 ## Let's get started!
+
+The following four factors have an intimate relationship:
+
+* Sample size
+* Effect size
+* Significance level = P (Type I error) = probability of finding an effect that is not there
+* **Power = 1 - P (Type II error)** = probability of finding an effect that is there
+
+Given any three of these, we can easily determine the fourth.
   
 To start, let's import the necessary libraries required for this simulation: 
 
