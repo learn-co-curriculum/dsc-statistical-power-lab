@@ -20,7 +20,7 @@ The following four factors have an intimate relationship:
 * Sample size
 * Effect size
 * Significance level = $\alpha$ = P(Type I error) = probability of finding an effect that is not there
-* **Power = 1 -$\beta$ = 1 - P(Type II error)** = probability of finding an effect that is there
+* **Power = 1 - $\beta$ = 1 - P(Type II error)** = probability of finding an effect that is there
     * where $\beta$ is the probability of a Type II error, i.e. the probability of failing to reject a false null hypothesis
 
 Given any three of these, we can easily determine the fourth.
